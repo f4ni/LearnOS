@@ -5,7 +5,7 @@ This is a basic OS written to learn the fundamentals of OS development.
 
 ---
 
-# Big Picture First (Very Important)
+## Big Picture First (Very Important)
 
 Before touching code, fix this flow in your head:
 
@@ -37,9 +37,9 @@ LearnOS is **not multitasking**, **not protected mode**, **not fancy** yet — a
 
 ---
 
-# PART 1: Bootloader (boot.asm)
+## PART 1: Bootloader (boot.asm)
 
-## What is a bootloader?
+### What is a bootloader?
 
 A bootloader is:
 
@@ -52,19 +52,19 @@ A bootloader is:
 
 ---
 
-## These two lines are NON-NEGOTIABLE
+### These two lines are NON-NEGOTIABLE
 
 ```asm
 [BITS 16]
 [ORG 0x7C00]
 ```
 
-### `[BITS 16]`
+#### `[BITS 16]`
 
 * BIOS starts CPU in **16-bit real mode**
 * All instructions must be 16-bit compatible
 
-### `[ORG 0x7C00]`
+#### `[ORG 0x7C00]`
 
 * BIOS loads boot sector at **physical address 0x7C00**
 * ORG tells NASM:
@@ -75,7 +75,7 @@ Without this → jumps, labels, memory references break.
 
 ---
 
-## Entry Point
+### Entry Point
 
 ```asm
 start:
@@ -85,7 +85,7 @@ This is where BIOS jumps.
 
 ---
 
-## Interrupt Control
+### Interrupt Control
 
 ```asm
 cli
@@ -100,7 +100,7 @@ cli
 
 ---
 
-## Save Boot Drive Number
+### Save Boot Drive Number
 
 ```asm
 mov [BOOT_DRIVE], dl
@@ -119,7 +119,7 @@ So we save it.
 
 ---
 
-## Stack Setup
+### Stack Setup
 
 ```asm
 mov ax, 0x0000
@@ -127,7 +127,7 @@ mov ss, ax
 mov sp, 0x7C00
 ```
 
-### What is a stack?
+#### What is a stack?
 
 * Used for:
 
@@ -136,7 +136,7 @@ mov sp, 0x7C00
   * `push`
   * `pop`
 
-### Why stack at 0x7C00?
+#### Why stack at 0x7C00?
 
 * Bootloader code is already there
 * Stack grows **downwards**
@@ -153,14 +153,14 @@ sti
 
 ---
 
-## Printing Text (BIOS)
+### Printing Text (BIOS)
 
 ```asm
 mov si, message
 call print_string
 ```
 
-### `SI`
+#### `SI`
 
 * Source Index register
 * Used for string operations
@@ -169,7 +169,7 @@ call print_string
 
 ---
 
-### `print_string` function
+#### `print_string` function
 
 ```asm
 mov ah, 0x0E
@@ -195,7 +195,7 @@ This is **firmware printing**, not OS printing.
 
 ---
 
-## Disk Read (Critical Concept)
+### Disk Read (Critical Concept)
 
 ```asm
 mov bx, 0x1000
@@ -240,13 +240,13 @@ jc disk_error
 
 ---
 
-## Jump to Kernel
+### Jump to Kernel
 
 ```asm
 jmp 0x0000:0x1000
 ```
 
-### FAR jump:
+#### FAR jump:
 
 * Changes CS:IP
 * CPU now executes kernel code
@@ -258,21 +258,21 @@ At this moment:
 
 ---
 
-## Boot Signature
+### Boot Signature
 
 ```asm
 times 510-($-$$) db 0
 dw 0xAA55
 ```
 
-### Mandatory BIOS requirement:
+#### Mandatory BIOS requirement:
 
 * Last two bytes must be `0x55AA`
 * Otherwise BIOS ignores the disk
 
 ---
 
-# PART 2: Kernel Entry (kernel_entry.asm)
+## PART 2: Kernel Entry (kernel_entry.asm)
 
 This file is the **bridge between assembly and C**.
 
@@ -291,14 +291,14 @@ global kernel_entry
 extern kernel_main
 ```
 
-### Meaning:
+#### Meaning:
 
 * `kernel_entry` → visible to linker
 * `kernel_main` → defined in C
 
 ---
 
-## CPU State Cleanup
+### CPU State Cleanup
 
 ```asm
 mov ax, 0
@@ -314,7 +314,7 @@ Why?
 
 ---
 
-## Stack Setup for C
+### Stack Setup for C
 
 ```asm
 mov sp, stack_top
@@ -333,7 +333,7 @@ resb 4096
 
 ---
 
-## Enter C World
+### Enter C World
 
 ```asm
 call kernel_main
@@ -343,7 +343,7 @@ call kernel_main
 
 ---
 
-## Halt Loop
+### Halt Loop
 
 ```asm
 jmp .hang
@@ -353,7 +353,7 @@ Never return.
 
 ---
 
-# PART 3: Kernel in C (kernel.c)
+## PART 3: Kernel in C (kernel.c)
 
 ---
 
@@ -361,7 +361,7 @@ Never return.
 __asm__(".code16gcc");
 ```
 
-### EXTREMELY IMPORTANT
+#### EXTREMELY IMPORTANT
 
 * Tells GCC:
 
@@ -370,7 +370,7 @@ __asm__(".code16gcc");
 
 ---
 
-## Printing a Character
+### Printing a Character
 
 ```c
 int $0x10
@@ -387,7 +387,7 @@ Totally fine for now.
 
 ---
 
-## `kernel_main`
+### `kernel_main`
 
 ```c
 const char *message = "\r\nHello from C kernel of LearnOS!";
@@ -416,13 +416,13 @@ while (1) {
 
 ---
 
-# PART 4: Makefile (Build Pipeline)
+## PART 4: Makefile (Build Pipeline)
 
 This is the **toolchain logic**.
 
 ---
 
-## Cross Compiler
+### Cross Compiler
 
 ```makefile
 i386-elf-gcc
@@ -435,7 +435,7 @@ Why?
 
 ---
 
-## Flags
+### Flags
 
 ```makefile
 -ffreestanding
@@ -457,7 +457,7 @@ Why?
 
 ---
 
-## Linker Flags
+### Linker Flags
 
 ```makefile
 -Ttext 0x1000
@@ -474,7 +474,7 @@ Why?
 
 ---
 
-## Disk Image Creation
+### Disk Image Creation
 
 ```makefile
 cat boot.bin kernel.bin > disk.img
@@ -491,7 +491,7 @@ Exactly what BIOS expects.
 
 ---
 
-# What We Have Built (Reality Check)
+## What We Have Built (Reality Check)
 
 We built:
 - Real BIOS bootloader
