@@ -5,7 +5,8 @@ LD      = i386-elf-ld
 
 # ===== Flags =====
 CFLAGS  = -ffreestanding -m16 -fno-pie -fno-stack-protector
-LDFLAGS = -Ttext 0x1000 -e kernel_entry --oformat binary
+# LDFLAGS = -Ttext 0x1000 -e kernel_entry --oformat binary
+LDFLAGS = -T kernel/linker.ld --oformat binary
 
 # ===== Files =====
 BOOT_SRC    = boot/boot.asm
@@ -44,6 +45,7 @@ $(DISK_IMG): $(BOOT_BIN) $(KERNEL_BIN)
 # ===== Commands =====
 run: $(DISK_IMG)
 	qemu-system-i386 -drive format=raw,file=$(DISK_IMG)
+# 	qemu-system-i386 -drive format=raw,file=$(DISK_IMG) -d int,cpu_reset
 
 clean:
 	rm -f build/*

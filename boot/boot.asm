@@ -14,7 +14,8 @@ start:
     call print_string
 
     ; Load kernel from disk (sector 2, 1 sector, address 0x1000)
-    mov es, 0
+    mov ax, 0x0000
+    mov es, ax
     mov bx, 0x1000          ; ES:BX points to load address
     mov dh, 0               ; Head
     mov dl, [BOOT_DRIVE]    ; Use saved boot drive
