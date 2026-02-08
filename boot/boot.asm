@@ -94,7 +94,7 @@ switch_to_pm:
     mov cr0, eax
 
     ; FAR jump clears pipeline
-    jmp 0x08:protected_mode_start
+    jmp CODE_SEG:protected_mode_start
 
 
 ; =========================
@@ -104,7 +104,7 @@ switch_to_pm:
 [BITS 32]
 
 protected_mode_start:
-    mov ax, 0x10
+    mov ax, DATA_SEG
     mov ds, ax
     mov ss, ax
     mov es, ax
@@ -114,7 +114,7 @@ protected_mode_start:
     mov esp, 0x90000   ; safe stack
 
     ; Jump to kernel (now must be 32-bit)
-    jmp 0x08:0x1000
+    jmp CODE_SEG:0x1000
 
 
 disk_error:
