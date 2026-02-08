@@ -1,17 +1,16 @@
-[BITS 16]
+[BITS 32]
 
 global kernel_entry
 extern kernel_main
 
 kernel_entry:
-    mov ax, 0
-    mov ds, ax
-    mov es, ax
-    mov ss, ax
-    mov sp, stack_top
+    ; Stack already valid, but we can reset it if we want
+    mov esp, stack_top
+
     call kernel_main
 
 .hang:
+    hlt
     jmp .hang
 
 section .bss

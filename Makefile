@@ -4,7 +4,7 @@ CC      = i386-elf-gcc
 LD      = i386-elf-ld
 
 # ===== Flags =====
-CFLAGS  = -ffreestanding -m16 -fno-pie -fno-stack-protector
+CFLAGS  = -ffreestanding -m32 -fno-pie -fno-stack-protector
 # LDFLAGS = -Ttext 0x1000 -e kernel_entry --oformat binary
 LDFLAGS = -T kernel/linker.ld --oformat binary
 
