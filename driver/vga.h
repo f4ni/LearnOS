@@ -13,6 +13,7 @@
 
 void clear_screen();
 void scroll();
-void putchar(char c);
-void print_string(const char* s);
+void print_backspace();
+void putchar(char c, uint8_t color);
+void print_string(const char* s, uint8_t color);
 #endif

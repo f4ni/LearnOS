@@ -5,7 +5,7 @@ static volatile uint16_t* const VGA_MEMORY = (uint16_t*) VGA_ADDR;
 
 static uint8_t cursor_x = 0;
 static uint8_t cursor_y = 0;
-static uint8_t curr_color = WHITE;
+static uint8_t default_color = WHITE;
 
 static inline uint16_t vga_entry(char c, uint8_t color)
 {
@@ -38,28 +38,37 @@ void scroll()
     // clear last row
     for (int x = 0; x < VGA_WIDTH; x++)
         VGA_MEMORY[(VGA_HEIGHT - 1) * VGA_WIDTH + x] =
-            vga_entry(' ', curr_color);
+            vga_entry(' ', default_color);
 
     cursor_y = VGA_HEIGHT - 1;
 }
 
+void print_backspace() {
+    if (cursor_x > 0) {
+        cursor_x--;
+    } else if (cursor_y > 0) {
+        cursor_y--;
+        cursor_x = VGA_WIDTH - 1;
+    } else {
+        // nothing
+    }
+
+    VGA_MEMORY[cursor_y * VGA_WIDTH + cursor_x] = vga_entry(' ', default_color);
+}
+
 void putchar(char c, uint8_t color)
 {
-    if (c == '\n')
-    {
+    if (c == '\n') {
         cursor_x = 0;
         cursor_y++;
         scroll();
         return;
     }
 
-    VGA_MEMORY[cursor_y * VGA_WIDTH + cursor_x] =
-        vga_entry(c, color);
-
+    VGA_MEMORY[cursor_y * VGA_WIDTH + cursor_x] = vga_entry(c, color);
     cursor_x++;
 
-    if (cursor_x >= VGA_WIDTH)
-    {
+    if (cursor_x >= VGA_WIDTH) {
         cursor_x = 0;
         cursor_y++;
         scroll();

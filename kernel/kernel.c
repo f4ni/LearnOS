@@ -5,10 +5,10 @@
 
 void kernel_main() {
     clear_screen();
-    print_string("System Booted Successfully!\n\n");
-    print_string("OS    : LearnOS\n");
-    print_string("Mode  : 32-bit Protected Mode\n");
-    print_string("Author: Farhan Tariq\n\n");
+    print_string("System Booted Successfully!\n\n", YELLOW);
+    print_string("OS    : LearnOS\n", YELLOW);
+    print_string("Mode  : 32-bit Protected Mode\n", YELLOW);
+    print_string("Author: Farhan Tariq\n\n", YELLOW);
 
     pic_remap();
     idt_load();

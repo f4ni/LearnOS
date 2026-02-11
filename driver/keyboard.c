@@ -6,8 +6,12 @@
 #define KEYBOARD_IRQ 1
 #define KEYBOARD_PORT 0x60
 #define KEYBOARD_INTERRUPT 0x21
+#define MAX_CHARS 256
 
 extern void keyboard_handler();
+
+static char key_buffer[MAX_CHARS];
+static uint8_t ind = 0;
 
 // Basic US keyboard scancode set 1
 static const char scancode_table[] =
@@ -29,6 +33,13 @@ static const char scancode_table[] =
     ' '
 };
 
+void backspace()
+{
+    if (ind > 0) {
+        key_buffer[--ind] = '\0';
+    }
+}
+
 void keyboard_handler_main()
 {
     // Send End Of Interrupt (EOI) to Master PIC
@@ -42,13 +53,27 @@ void keyboard_handler_main()
 
     char c = scancode_table[scancode];
 
-    if (c) {
-        putchar(c);
+    if (c == '\b') {
+        if (ind > 0) {
+            backspace();
+            print_backspace();
+        }
+    } else {
+        putchar(c, LIGHT_GRAY);
+        key_buffer[ind++] = c;
+    }
+
+
+    if (c == '\n') {
+        print_string(key_buffer, LIGHT_RED);
+        for (int i = 0; i < ind; i++)
+            key_buffer[i] = '\0';
+        ind = 0;
     }
 }
 
 void keyboard_init()
 {
     idt_set_gate(0x21, (uint32_t)keyboard_handler);
-    print_string("Keyboard installed successfully.\n");
+    print_string("Keyboard installed successfully.\n", LIGHT_GRAY);
 }
