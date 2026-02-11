@@ -26,11 +26,23 @@ start:
 
     call load_sector
     call enable_a20
+    call sleep_3s
     call switch_to_pm
 
 hang:
     hlt
     jmp hang
+
+
+; =========================
+; Sleep for ~2 seconds
+; =========================
+sleep_3s:
+    mov ah, 0x86        ; BIOS wait function
+    mov cx, 0x001E      ; High word of 2,000,000
+    mov dx, 0x8480      ; Low word of 2,000,000
+    int 0x15            ; BIOS delay
+    ret
 
 
 %include "boot/gdt.asm"

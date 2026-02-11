@@ -1,14 +1,16 @@
 # LearnOS
 
 LearnOS is a **minimal, educational operating system** written to teach the fundamentals of OS development.  
-It is single-tasking, runs in **16-bit real mode**, and currently boots using BIOS before handing control to a simple C kernel.
+It is single-tasking, runs in **32-bit Protected Mode**, and boots using BIOS before switching to Protected Mode and handing control to a C kernel.
 
 This repository is designed for learners who want to understand:
 
-- Bootloaders
-- CPU initialization and stack setup
-- Assembly → C handoff
-- Simple I/O (printing to screen, keyboard input)
+- Bootloaders (16-bit to 32-bit handoff)
+- GDT (Global Descriptor Table) setup
+- IDT (Interrupt Descriptor Table) and Interrupt handling
+- VGA Driver (Direct memory access to 0xB8000)
+- Keyboard Driver (IRQ 1, Scancodes)
+- PIC (Programmable Interrupt Controller) remapping
 - Disk loading and memory mapping
 
 ---
@@ -16,10 +18,12 @@ This repository is designed for learners who want to understand:
 ## Project Structure
 
 LearnOS/
-├── boot/                  # Bootloader source (boot.asm)
+├── boot/                  # Bootloader source (boot.asm, gdt.asm)
+├── cpu/                   # Hardware abstraction (IDT, PIC, IO ports)
+├── driver/                # Hardware drivers (VGA, Keyboard)
+├── kernel/                # Kernel entry and main logic
 ├── build/                 # Compiled binaries and disk image
-├── docs/                  # Step-by-step explanation for beginners
-├── kernel/                # Kernel source (kernel_entry.asm + kernel.c)
+├── docs/                  # Step-by-step explanation
 └── Makefile               # Build pipeline
 
 ---
@@ -76,10 +80,3 @@ make run
 ```bash
 make clean
 ```
-
-### Next Steps
-
-- Replace BIOS printing with VGA driver
-- Add keyboard input
-- Explore protected mode
-- Implement basic drivers and multitasking

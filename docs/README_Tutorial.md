@@ -499,3 +499,13 @@ We built:
 - Assembly → C handoff
 - Freestanding C kernel
 - Running in QEMU
+
+---
+
+## References
+
+- [OSDev Tutorial](https://www.osdev.org/Tutorials)
+- [Writing a Simple Operating System — from Scratch](https://www.cs.bham.ac.uk/~exr/lectures/opsys/10_11/lectures/os-dev.pdf)
+- [OS tutorial by Carlos Fenollosas](https://github.com/cfenollosa/os-tutorial/)
+- [Memory Addressing on x86](https://www.c-jump.com/CIS77/ASM/Memory/lecture.html#M77_0120_reg_names)
+- [JamesM's Kernel Development Tutorials](https://web.archive.org/web/20160326064341/http://jamesmolloy.co.uk/tutorial_html/3.-The%20Screen.html)
