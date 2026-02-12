@@ -4,6 +4,7 @@
 #include "keyboard.h"
 
 void kernel_main() {
+    enable_cursor(14, 15);
     clear_screen();
     print_string("System Booted Successfully!\n\n", YELLOW);
     print_string("OS    : LearnOS\n", YELLOW);
@@ -16,6 +17,7 @@ void kernel_main() {
 
     __asm__ volatile("sti");
 
+    print_string("\n> ", LIGHT_GRAY);
     while (1) {
         __asm__("hlt");
     }

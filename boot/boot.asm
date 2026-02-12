@@ -26,7 +26,7 @@ start:
 
     call load_sector
     call enable_a20
-    call sleep_3s
+    ;call sleep_2s
     call switch_to_pm
 
 hang:
@@ -37,7 +37,7 @@ hang:
 ; =========================
 ; Sleep for ~2 seconds
 ; =========================
-sleep_3s:
+sleep_2s:
     mov ah, 0x86        ; BIOS wait function
     mov cx, 0x001E      ; High word of 2,000,000
     mov dx, 0x8480      ; Low word of 2,000,000

@@ -6,7 +6,7 @@ AS      = nasm
 CC      = i386-elf-gcc
 LD      = i386-elf-ld
 
-CFLAGS  = -Icpu -Idriver -ffreestanding -m32 -fno-pie -fno-stack-protector
+CFLAGS  = -Icpu -Idriver -Iutils -ffreestanding -m32 -fno-pie -fno-stack-protector
 # LDFLAGS = -Ttext 0x1000 -e kernel_entry --oformat binary
 LDFLAGS = -T kernel/linker.ld --oformat binary
 
@@ -15,8 +15,7 @@ BOOT_BIN    = build/boot.bin
 KERNEL_BIN  = build/kernel.bin
 DISK_IMG    = build/learnos.img
 
-# OBJ = build/kernel_entry.o build/kernel.o build/vga.o build/idt.o build/isr.o build/interrupt.o
-OBJ = build/kernel_entry.o build/kernel.o build/vga.o build/idt.o build/pic.o build/keyboard.o build/keyboard_handler.o
+OBJ = build/kernel_entry.o build/kernel.o build/vga.o build/idt.o build/pic.o build/keyboard.o build/keyboard_handler.o build/string.o
 # OBJ := $(wildcard build/*.o)
 
 all: $(DISK_IMG)
@@ -33,6 +32,9 @@ build/%.o: cpu/%.c
 	$(CC) $(CFLAGS) -c $< -Idriver -o $@
 
 build/%.o: driver/%.c
+	$(CC) $(CFLAGS) -c $< -Idriver -o $@
+
+build/%.o: utils/%.c
 	$(CC) $(CFLAGS) -c $< -Idriver -o $@
 
 # 3. Assemble Assembly files from kernel/ and cpu/

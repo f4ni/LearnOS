@@ -2,6 +2,7 @@
 #include "io.h"
 #include "idt.h"
 #include "vga.h"
+#include "commands.h"
 
 #define KEYBOARD_IRQ 1
 #define KEYBOARD_PORT 0x60
@@ -9,7 +10,6 @@
 #define MAX_CHARS 256
 
 extern void keyboard_handler();
-
 static char key_buffer[MAX_CHARS];
 static uint8_t ind = 0;
 
@@ -42,10 +42,10 @@ void backspace()
 
 void keyboard_handler_main()
 {
+    uint8_t scancode = inb(KEYBOARD_PORT);
+
     // Send End Of Interrupt (EOI) to Master PIC
     outb(0x20, 0x20);
-
-    uint8_t scancode = inb(KEYBOARD_PORT);
 
     // Ignore key release (Break code)
     if (scancode & 0x80)
@@ -58,22 +58,22 @@ void keyboard_handler_main()
             backspace();
             print_backspace();
         }
-    } else {
+    } else if (c == '\n') {
         putchar(c, LIGHT_GRAY);
-        key_buffer[ind++] = c;
-    }
-
-
-    if (c == '\n') {
-        print_string(key_buffer, LIGHT_RED);
+        key_buffer[ind] = '\0';
+        check_cmd(key_buffer);
         for (int i = 0; i < ind; i++)
             key_buffer[i] = '\0';
         ind = 0;
+        print_string("> ", LIGHT_GRAY);
+    } else {
+        putchar(c, LIGHT_GRAY);
+        key_buffer[ind++] = c;
     }
 }
 
 void keyboard_init()
 {
     idt_set_gate(0x21, (uint32_t)keyboard_handler);
-    print_string("Keyboard installed successfully.\n", LIGHT_GRAY);
+    print_string("Keyboard driver loaded successfully.\n", LIGHT_GRAY);
 }

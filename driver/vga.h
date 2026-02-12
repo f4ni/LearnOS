@@ -16,4 +16,6 @@ void scroll();
 void print_backspace();
 void putchar(char c, uint8_t color);
 void print_string(const char* s, uint8_t color);
+void update_cursor();
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
 #endif

@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "vga.h"
+#include "io.h"
 
 static volatile uint16_t* const VGA_MEMORY = (uint16_t*) VGA_ADDR;
 
@@ -19,6 +20,7 @@ void clear_screen()
 
     cursor_x = 0;
     cursor_y = 0;
+    update_cursor();
 }
 
 void scroll()
@@ -54,6 +56,28 @@ void print_backspace() {
     }
 
     VGA_MEMORY[cursor_y * VGA_WIDTH + cursor_x] = vga_entry(' ', default_color);
+    update_cursor();
+}
+
+void update_cursor()
+{
+    uint16_t pos = cursor_y * VGA_WIDTH + cursor_x;
+
+    outb(0x3D4, 0x0F);
+    outb(0x3D5, (uint8_t)(pos & 0xFF));
+    outb(0x3D4, 0x0E);
+    outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+}
+
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
+{
+    outb(0x3D4, 0x0A);
+    outb(0x3D5, cursor_start);
+
+    outb(0x3D4, 0x0B);
+    outb(0x3D5, cursor_end);
+    
+    update_cursor();
 }
 
 void putchar(char c, uint8_t color)
@@ -62,6 +86,7 @@ void putchar(char c, uint8_t color)
         cursor_x = 0;
         cursor_y++;
         scroll();
+        update_cursor();
         return;
     }
 
@@ -73,6 +98,7 @@ void putchar(char c, uint8_t color)
         cursor_y++;
         scroll();
     }
+    update_cursor();
 }
 
 void print_string(const char* s, uint8_t color)
