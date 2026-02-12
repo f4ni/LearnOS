@@ -15,7 +15,7 @@ BOOT_BIN    = build/boot.bin
 KERNEL_BIN  = build/kernel.bin
 DISK_IMG    = build/learnos.img
 
-OBJ = build/kernel_entry.o build/kernel.o build/vga.o build/idt.o build/pic.o build/keyboard.o build/keyboard_handler.o build/string.o
+OBJ = build/kernel_entry.o build/kernel.o build/vga.o build/idt.o build/pic.o build/keyboard.o build/keyboard_handler.o build/string.o build/commands.o
 # OBJ := $(wildcard build/*.o)
 
 all: $(DISK_IMG)

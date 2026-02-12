@@ -1,21 +1,27 @@
+#include "io.h"
+#include "vga.h"
 #include "string.h"
 
-const char *cmds[] = {"exit", "uname", "author", "mode"};
+#define AUTHOR "Farhan Tariq"
+#define OS "LearnOS"
+#define OS_VER "0.1"
+#define MODE "32-bit Protected Mode"
 
-void check_cmd(const char *str)
-{
-    if (strcmp(str, cmds[0]) == 0) {
-        asm volatile("hlt");
-        return;
-    } else if (strcmp(str, cmds[1]) == 0) {
-        print_string("LearnOS\n", YELLOW);
-        return;
-    } else if (strcmp(str, cmds[2]) == 0) {
-        print_string("Farhan Tariq\n", YELLOW);
-        return;
-    } else if (strcmp(str, cmds[3]) == 0) {
-        print_string("32-bit Protected Mode\n", YELLOW);
-        return;
-    } else
-        print_string("Unknown command\n", LIGHT_RED);
-}
+typedef struct {
+    const char *name;
+    void (*func)(void);        // pointer to function
+    const char *desc;      // optional (for help command)
+} command_t;
+
+#define CMD_COUNT (sizeof(commands) / sizeof(command_t))
+
+void cmd_help(void);
+void cmd_exit(void);
+void reboot(void);
+void cmd_reboot(void);
+void cmd_uname(void);
+void cmd_author(void);
+void cmd_mode(void);
+void cmd_about(void);
+void cmd_clear(void);
+void check_cmd(const char *str);
